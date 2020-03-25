@@ -91,7 +91,7 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
     
     self.userInteractionEnabled = YES;
     self.backgroundColor = [UIColor clearColor];
-		self.alpha = 0;
+        self.alpha = 0;
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.autoresizesSubviews = YES;
     
@@ -535,7 +535,7 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
         NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
         
         for (UIWindow *window in frontToBackWindows) {
-          if (window.windowLevel == UIWindowLevelNormal && window.hidden == NO) {
+          if (window.windowLevel == UIWindowLevelNormal && window.hidden == NO)  {
             [window addSubview:self];
             
             break;
@@ -544,7 +544,7 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
       }
       
       // Before we calculate layout for containerView, make sure we are transformed for current orientation.
-      [self updateForInterfaceOrientation];
+//      [self updateForInterfaceOrientation];
       
       // Make sure we're not hidden
       self.hidden = NO;
@@ -912,7 +912,7 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
                 initialSpringVelocity:10.0
                               options:0
                            animations:^{
-                             _containerView.frame = finalContainerFrame;
+                               self->_containerView.frame = finalContainerFrame;
                            }
                            completion:completionBlock];
           break;
@@ -999,10 +999,8 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
       break;
   }
   
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
-        self.transform = CGAffineTransformMakeRotation(angle);
-        self.frame = self.window.bounds;
-    }
+//  self.transform = CGAffineTransformMakeRotation(angle);
+//  self.frame = self.window.bounds;
 }
 
 

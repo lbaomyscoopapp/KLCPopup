@@ -535,7 +535,7 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
         NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
         
         for (UIWindow *window in frontToBackWindows) {
-          if (window.windowLevel == UIWindowLevelNormal) {
+          if (window.windowLevel == UIWindowLevelNormal && window.hidden == NO) {
             [window addSubview:self];
             
             break;
@@ -618,23 +618,6 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
       contentViewFrame.origin = CGPointZero;
       self.contentView.frame = contentViewFrame;
       
-      // Reset _containerView's constraints in case contentView is uaing autolayout.
-      UIView* contentView = _contentView;
-      NSDictionary* views = NSDictionaryOfVariableBindings(contentView);
-      
-      [_containerView removeConstraints:_containerView.constraints];
-      [_containerView addConstraints:
-       [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[contentView]|"
-                                               options:0
-                                               metrics:nil
-                                                 views:views]];
-      
-      [_containerView addConstraints:
-       [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[contentView]|"
-                                               options:0
-                                               metrics:nil
-                                                 views:views]];
-      
       // Determine final position and necessary autoresizingMask for container.
       CGRect finalContainerFrame = containerFrame;
       UIViewAutoresizing containerAutoresizingMask = UIViewAutoresizingNone;
@@ -659,7 +642,7 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
         containerAutoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
       }
       
-      // Otherwise use relative layout. Default to center if none provided.
+      // Otherwise use relative layout. Default to center is none provided.
       else {
         
         NSValue* layoutValue = [parameters valueForKey:@"layout"];
@@ -996,33 +979,30 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
 
 - (void)updateForInterfaceOrientation {
   
-  // We must manually fix orientation prior to iOS 8
-  if (([[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending)) {
-
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    CGFloat angle;
-    
-    switch (orientation) {
-      case UIInterfaceOrientationPortraitUpsideDown:
-        angle = M_PI;
-        break;
-      case UIInterfaceOrientationLandscapeLeft:
-        angle = -M_PI/2.0f;;
-        
-        break;
-      case UIInterfaceOrientationLandscapeRight:
-        angle = M_PI/2.0f;
-        
-        break;
-      default: // as UIInterfaceOrientationPortrait
-        angle = 0.0;
-        break;
-    }
-    
-    self.transform = CGAffineTransformMakeRotation(angle);
+  UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+  CGFloat angle;
+  
+  switch (orientation) {
+    case UIInterfaceOrientationPortraitUpsideDown:
+      angle = M_PI;
+      break;
+    case UIInterfaceOrientationLandscapeLeft:
+      angle = -M_PI/2.0f;;
+      
+      break;
+    case UIInterfaceOrientationLandscapeRight:
+      angle = M_PI/2.0f;
+      
+      break;
+    default: // as UIInterfaceOrientationPortrait
+      angle = 0.0;
+      break;
   }
-
-  self.frame = self.window.bounds;
+  
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
+        self.transform = CGAffineTransformMakeRotation(angle);
+        self.frame = self.window.bounds;
+    }
 }
 
 
